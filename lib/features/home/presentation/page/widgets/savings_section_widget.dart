@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_super_exchange_flutter/features/home/domain/entities/saving_entity.dart';
 import 'savings_card_widget.dart';
 
 class SavingsSectionWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> savings;
+  final List<SavingEntity> savings;
 
   const SavingsSectionWidget({
     super.key,
@@ -39,10 +40,10 @@ class SavingsSectionWidget extends StatelessWidget {
                   right: index < savings.length - 1 ? 12 : 0,
                 ),
                 child: SavingsCardWidget(
-                  name: saving['name'] as String,
-                  amount: saving['amount'] as int,
-                  target: saving['target'] as int,
-                  color: saving['color'] as int,
+                  name: saving.name,
+                  amount: saving.amount,
+                  target: saving.target,
+                  color: saving.color,
                 ),
               );
             },

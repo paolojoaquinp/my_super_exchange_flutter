@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_super_exchange_flutter/features/home/domain/entities/recipient_entity.dart';
 
 class RecentRecipientsWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> recipients;
+  final List<RecipientEntity> recipients;
 
   const RecentRecipientsWidget({
     super.key,
@@ -70,7 +71,7 @@ class RecentRecipientsWidget extends StatelessWidget {
                           width: 2,
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(recipient['image'] as String),
+                          image: NetworkImage(recipient.image),
                           fit: BoxFit.cover,
                         ),
                       ),
