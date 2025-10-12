@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_super_exchange_flutter/core/config/splash_screen.dart';
-import 'package:my_super_exchange_flutter/features/home/presentation/home_screen.dart';
+import 'package:my_super_exchange_flutter/features/home/presentation/page/home_screen.dart';
 
 void main() => runApp(const MyApp());
 

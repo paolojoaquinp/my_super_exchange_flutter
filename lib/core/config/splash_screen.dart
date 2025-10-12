@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:my_super_exchange_flutter/features/home/presentation/home_screen.dart';
+import 'package:my_super_exchange_flutter/features/home/presentation/page/home_screen.dart';
 
 
 class SplashScreen extends StatelessWidget {
