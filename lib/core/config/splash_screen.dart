@@ -38,13 +38,13 @@ class SplashScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: Colors.white,
           body: Center(
-            child: Text('Splash Screen'),
-            // child: Lottie.asset(
-            //   'assets/lotties/lottie-animation-newspaper.json',
-            //   width: 200,
-            //   height: 200,
-            //   fit: BoxFit.contain
-            // ),
+            // child: Text('Splash Screen'),
+            child: Lottie.asset(
+              'assets/lotties/bitcoin-wallet.json',
+              width: 400,
+              height: 400,
+              fit: BoxFit.contain
+            ),
           ),
         );
       },
