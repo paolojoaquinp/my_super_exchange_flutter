@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_super_exchange_flutter/core/config/splash_screen.dart';
 import 'package:my_super_exchange_flutter/features/home/presentation/page/home_screen.dart';
+import 'package:my_super_exchange_flutter/features/exchange/presentation/page/page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         '/home': (context) => const HomeScreen(),
+        '/exchange': (context) => const ExchangeScreen(),
       },
       // home: Scaffold(
       //   appBar: AppBar(
