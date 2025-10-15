@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class ExchangeButtonWidget extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool isLoading;
   
   const ExchangeButtonWidget({
     super.key,
     this.onTap,
+    this.isLoading = false,
   });
 
   @override
@@ -14,11 +16,11 @@ class ExchangeButtonWidget extends StatelessWidget {
       width: double.infinity,
       height: 54,
       child: ElevatedButton(
-        onPressed: onTap ?? () {
-          // TODO: Implement exchange logic
-        },
+        onPressed: isLoading ? null : onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF6366F1),
+          backgroundColor: isLoading 
+              ? const Color(0xFF6366F1).withOpacity(0.6)
+              : const Color(0xFF6366F1),
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(27),
@@ -26,27 +28,38 @@ class ExchangeButtonWidget extends StatelessWidget {
           elevation: 0,
           shadowColor: Colors.transparent,
           padding: EdgeInsets.zero,
+          disabledBackgroundColor: const Color(0xFF6366F1).withOpacity(0.6),
+          disabledForegroundColor: Colors.white,
         ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.swap_horiz,
-              color: Colors.white,
-              size: 22,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'Exchange',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.2,
+        child: isLoading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.swap_horiz,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'Exchange',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

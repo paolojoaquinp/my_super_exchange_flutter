@@ -243,15 +243,15 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
         return;
       }
 
-      emit(ExchangeLoading());
+      emit(currentState.copyWith(isExecutingExchange: true));
 
-      // Simulación de intercambio exitoso
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 2));
+
+      emit(currentState.copyWith(isExecutingExchange: false));
 
       emit(const ExchangeSuccess('¡Intercambio realizado con éxito!'));
       
-      // Volver al estado anterior después de mostrar el mensaje
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(milliseconds: 500));
       emit(currentState);
     }
   }

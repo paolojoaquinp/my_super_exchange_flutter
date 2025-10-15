@@ -84,14 +84,7 @@ class _BodyState extends State<_Body> {
           SafeArea(
             child: BlocBuilder<ExchangeBloc, ExchangeState>(
               builder: (context, state) {
-                if (state is ExchangeLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  );
-                }
-
                 if (state is ExchangeLoaded) {
-                  // Actualizar los controladores con los valores del estado
                   if (_fromAmountController.text !=
                       state.fromAmount.toStringAsFixed(2)) {
                     _fromAmountController.text = state.fromAmount
@@ -175,6 +168,7 @@ class _BodyState extends State<_Body> {
                                     ),
                                     const SizedBox(height: 20),
                                     ExchangeButtonWidget(
+                                      isLoading: state.isExecutingExchange || (state is ExchangeLoading) || state.isCalculating,
                                       onTap: () {
                                         context.read<ExchangeBloc>().add(
                                           const ExecuteExchange(),
@@ -182,16 +176,16 @@ class _BodyState extends State<_Body> {
                                       },
                                     ),
                                     const SizedBox(height: 24),
-                                    if (state.isCalculating)
-                                      const Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        ),
-                                      ),
+                                    // if (state.isCalculating)
+                                    //   const Center(
+                                    //     child: Padding(
+                                    //       padding: EdgeInsets.all(8.0),
+                                    //       child: CircularProgressIndicator(
+                                    //         color: Colors.white,
+                                    //         strokeWidth: 2,
+                                    //       ),
+                                    //     ),
+                                    //   ),
                                   ],
                                 ),
                               ),

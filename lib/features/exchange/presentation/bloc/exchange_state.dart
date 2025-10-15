@@ -20,6 +20,7 @@ final class ExchangeLoaded extends ExchangeState {
   final double platformFee;
   final double? exchangeRate;
   final bool isCalculating;
+  final bool isExecutingExchange;
 
   const ExchangeLoaded({
     required this.availableCurrencies,
@@ -30,6 +31,7 @@ final class ExchangeLoaded extends ExchangeState {
     this.platformFee = 0.0,
     this.exchangeRate,
     this.isCalculating = false,
+    this.isExecutingExchange = false,
   });
 
   ExchangeLoaded copyWith({
@@ -41,6 +43,7 @@ final class ExchangeLoaded extends ExchangeState {
     double? platformFee,
     double? exchangeRate,
     bool? isCalculating,
+    bool? isExecutingExchange,
   }) {
     return ExchangeLoaded(
       availableCurrencies: availableCurrencies ?? this.availableCurrencies,
@@ -51,6 +54,7 @@ final class ExchangeLoaded extends ExchangeState {
       platformFee: platformFee ?? this.platformFee,
       exchangeRate: exchangeRate ?? this.exchangeRate,
       isCalculating: isCalculating ?? this.isCalculating,
+      isExecutingExchange: isExecutingExchange ?? this.isExecutingExchange,
     );
   }
 
@@ -64,6 +68,7 @@ final class ExchangeLoaded extends ExchangeState {
         platformFee,
         exchangeRate,
         isCalculating,
+        isExecutingExchange,
       ];
 }
 
