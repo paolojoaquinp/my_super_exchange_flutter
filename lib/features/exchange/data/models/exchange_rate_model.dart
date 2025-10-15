@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:my_super_exchange_flutter/features/exchange/domain/entities/exchange_rate_entity.dart';
 
 class ExchangeRateModel extends ExchangeRateEntity {
@@ -51,6 +52,16 @@ class ExchangeRateModel extends ExchangeRateEntity {
         ? double.parse(exchangeRateValue) 
         : (exchangeRateValue as num).toDouble();
     
+    // 🔍 LOG: Ver los parámetros de entrada
+    debugPrint('═══════════════════════════════════');
+    debugPrint('📊 CÁLCULO DE EXCHANGE RATE:');
+    debugPrint('Type: $type (${type == 0 ? "CRYPTO→FIAT" : "FIAT→CRYPTO"})');
+    debugPrint('Exchange Rate: $exchangeRate');
+    debugPrint('Amount: $amount');
+    debugPrint('Amount Currency: $amountCurrencyId');
+    debugPrint('From Currency: $fromCurrencyId');
+    debugPrint('To Currency: $toCurrencyId');
+    
     double fromAmount;
     double toAmount;
     
@@ -61,10 +72,14 @@ class ExchangeRateModel extends ExchangeRateEntity {
         // La cantidad está en crypto
         fromAmount = amount;
         toAmount = amount * exchangeRate;
+        debugPrint('✅ Caso: CRYPTO→FIAT, escribiendo en FROM');
+        debugPrint('   Cálculo: $fromAmount $fromCurrencyId × $exchangeRate = $toAmount $toCurrencyId');
       } else {
         // La cantidad está en fiat
         toAmount = amount;
         fromAmount = amount / exchangeRate;
+        debugPrint('✅ Caso: CRYPTO→FIAT, escribiendo en TO');
+        debugPrint('   Cálculo: $toAmount $toCurrencyId ÷ $exchangeRate = $fromAmount $fromCurrencyId');
       }
     } else {
       // De fiat a crypto
@@ -72,15 +87,25 @@ class ExchangeRateModel extends ExchangeRateEntity {
         // La cantidad está en fiat
         fromAmount = amount;
         toAmount = amount / exchangeRate;
+        debugPrint('✅ Caso: FIAT→CRYPTO, escribiendo en FROM');
+        debugPrint('   Cálculo: $fromAmount $fromCurrencyId ÷ $exchangeRate = $toAmount $toCurrencyId');
       } else {
         // La cantidad está en crypto
         toAmount = amount;
         fromAmount = amount * exchangeRate;
+        debugPrint('✅ Caso: FIAT→CRYPTO, escribiendo en TO');
+        debugPrint('   Cálculo: $toAmount $toCurrencyId × $exchangeRate = $fromAmount $fromCurrencyId');
       }
     }
 
     // Calcular el fee de plataforma (ejemplo: 0.5% del monto origen)
     final platformFee = fromAmount * 0.005;
+    
+    debugPrint('💰 Platform Fee: $platformFee (0.5% de $fromAmount)');
+    debugPrint('📤 Resultado Final:');
+    debugPrint('   FROM: $fromAmount $fromCurrencyId');
+    debugPrint('   TO: $toAmount $toCurrencyId');
+    debugPrint('═══════════════════════════════════');
 
     return ExchangeRateModel(
       exchangeRate: exchangeRate,

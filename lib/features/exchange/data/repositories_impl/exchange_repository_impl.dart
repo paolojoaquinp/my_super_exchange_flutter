@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/datasources/api/exchange_api_datasource.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/currency_model.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/exchange_rate_model.dart';
@@ -47,6 +48,11 @@ class ExchangeRepositoryImpl implements ExchangeRepository {
       }
       
       final byPrice = byPriceRaw;
+
+      // 🔍 LOG: Ver qué devuelve el API
+      debugPrint('📡 API Response - byPrice:');
+      debugPrint(byPrice.toString());
+      debugPrint('fiatToCryptoExchangeRate: ${byPrice['fiatToCryptoExchangeRate']}');
 
       // Determinar las monedas origen y destino basado en el tipo
       final fromCurrencyId = type == 0 ? cryptoCurrencyId : fiatCurrencyId;
