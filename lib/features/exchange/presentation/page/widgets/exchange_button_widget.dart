@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ExchangeButtonWidget extends StatelessWidget {
-  const ExchangeButtonWidget({super.key});
+  final VoidCallback? onTap;
+  
+  const ExchangeButtonWidget({
+    super.key,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +14,7 @@ class ExchangeButtonWidget extends StatelessWidget {
       width: double.infinity,
       height: 54,
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: onTap ?? () {
           // TODO: Implement exchange logic
         },
         style: ElevatedButton.styleFrom(
@@ -22,16 +27,16 @@ class ExchangeButtonWidget extends StatelessWidget {
           shadowColor: Colors.transparent,
           padding: EdgeInsets.zero,
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.swap_horiz,
               color: Colors.white,
               size: 22,
             ),
-            const SizedBox(width: 10),
-            const Text(
+            SizedBox(width: 10),
+            Text(
               'Exchange',
               style: TextStyle(
                 color: Colors.white,

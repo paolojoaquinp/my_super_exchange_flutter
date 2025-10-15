@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_super_exchange_flutter/features/exchange/data/repositories/exchange_repository_impl.dart';
+import 'package:my_super_exchange_flutter/features/exchange/presentation/bloc/exchange_bloc.dart';
 import 'widgets/widgets.dart';
 
 class ExchangeScreen extends StatelessWidget {
@@ -6,7 +9,12 @@ class ExchangeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Page();
+    return BlocProvider(
+      create: (context) => ExchangeBloc(
+        repository: ExchangeRepositoryImpl(),
+      )..add(const LoadAvailableCurrencies()),
+      child: const _Page(),
+    );
   }
 }
 
@@ -15,7 +23,7 @@ class _Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Body();
+    return const _Body();
   }
 }
 
@@ -27,11 +35,10 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
-  final TextEditingController _fromAmountController = TextEditingController(text: '320');
-  final TextEditingController _toAmountController = TextEditingController(text: '310.38');
+  final TextEditingController _fromAmountController = TextEditingController();
+  final TextEditingController _toAmountController = TextEditingController();
   final FocusNode _fromAmountFocusNode = FocusNode();
   final FocusNode _toAmountFocusNode = FocusNode();
-  String platformFee = '1.20';
 
   @override
   void dispose() {
@@ -49,72 +56,151 @@ class _BodyState extends State<_Body> {
         children: [
           _buildBackground(),
           SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                const ExchangeHeaderWidget(),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: BlocConsumer<ExchangeBloc, ExchangeState>(
+              listener: (context, state) {
+                if (state is ExchangeError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else if (state is ExchangeSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                if (state is ExchangeLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  );
+                }
+
+                if (state is ExchangeLoaded) {
+                  // Actualizar los controladores con los valores del estado
+                  if (_fromAmountController.text !=
+                      state.fromAmount.toStringAsFixed(2)) {
+                    _fromAmountController.text =
+                        state.fromAmount.toStringAsFixed(2);
+                  }
+                  if (_toAmountController.text !=
+                      state.toAmount.toStringAsFixed(2)) {
+                    _toAmountController.text =
+                        state.toAmount.toStringAsFixed(2);
+                  }
+
+                  return Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      const ExchangeHeaderWidget(),
+                      const SizedBox(height: 32),
+                      Expanded(
+                        child: SingleChildScrollView(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'From',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'From',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    CurrencyCardWidget(
+                                      currencyCode:
+                                          state.fromCurrency?.code ?? '',
+                                      currencyIcon: Icons.attach_money,
+                                      amountController: _fromAmountController,
+                                      focusNode: _fromAmountFocusNode,
+                                      backgroundColor: const Color(0xFF1E293B),
+                                      onChanged: (value) {
+                                        final amount =
+                                            double.tryParse(value) ?? 0.0;
+                                        context.read<ExchangeBloc>().add(
+                                              ChangeFromAmount(amount),
+                                            );
+                                      },
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const Text(
+                                      'To',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    CurrencyCardWidget(
+                                      currencyCode:
+                                          state.toCurrency?.code ?? '',
+                                      currencyIcon: Icons.currency_bitcoin,
+                                      amountController: _toAmountController,
+                                      focusNode: _toAmountFocusNode,
+                                      backgroundColor: const Color(0xFF1E293B),
+                                      onChanged: (value) {
+                                        final amount =
+                                            double.tryParse(value) ?? 0.0;
+                                        context.read<ExchangeBloc>().add(
+                                              ChangeToAmount(amount),
+                                            );
+                                      },
+                                    ),
+                                    const SizedBox(height: 20),
+                                    PlatformFeeWidget(
+                                      fee: state.platformFee.toStringAsFixed(2),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    ExchangeButtonWidget(
+                                      onTap: () {
+                                        context
+                                            .read<ExchangeBloc>()
+                                            .add(const ExecuteExchange());
+                                      },
+                                    ),
+                                    const SizedBox(height: 24),
+                                    if (state.isCalculating)
+                                      const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              CurrencyCardWidget(
-                                currencyCode: 'USD',
-                                currencyIcon: Icons.attach_money,
-                                amountController: _fromAmountController,
-                                focusNode: _fromAmountFocusNode,
-                                backgroundColor: const Color(0xFF1E293B),
-                                onChanged: (value) {
-                                  // TODO: Calcular conversión
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                'To',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              CurrencyCardWidget(
-                                currencyCode: 'EUR',
-                                currencyIcon: Icons.euro,
-                                amountController: _toAmountController,
-                                focusNode: _toAmountFocusNode,
-                                backgroundColor: const Color(0xFF1E293B),
-                                onChanged: (value) {
-                                  // TODO: Calcular conversión
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              PlatformFeeWidget(fee: platformFee),
-                              const SizedBox(height: 20),
-                              const ExchangeButtonWidget(),
-                              const SizedBox(height: 24),
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  );
+                }
+
+                return const Center(
+                  child: Text(
+                    'Error al cargar',
+                    style: TextStyle(color: Colors.white),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ],
