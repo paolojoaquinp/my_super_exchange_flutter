@@ -47,24 +47,23 @@ class CurrencyCardWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              currencyCode,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+          Text(
+            currencyCode,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          Flexible(
+          const SizedBox(width: 56),
+          Expanded(
             child: IntrinsicWidth(
               child: TextField(
                 controller: amountController,
                 focusNode: focusNode,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                 ],
                 style: const TextStyle(
                   color: Colors.white,
@@ -76,7 +75,13 @@ class CurrencyCardWidget extends StatelessWidget {
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
                   border: InputBorder.none,
-                  prefixText: '\$',
+                  hintText: '0.0 - 9999.99',
+                  hintStyle: TextStyle(
+                    color: Colors.white.withOpacity(0.4),
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  // prefixText: '\$',
                   prefixStyle: const TextStyle(
                     color: Colors.white,
                     fontSize: 17,

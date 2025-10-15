@@ -65,6 +65,8 @@ class _BodyState extends State<_Body> {
   final TextEditingController _toAmountController = TextEditingController();
   final FocusNode _fromAmountFocusNode = FocusNode();
   final FocusNode _toAmountFocusNode = FocusNode();
+  
+  bool _isUserTyping = false;
 
   @override
   void dispose() {
@@ -73,6 +75,13 @@ class _BodyState extends State<_Body> {
     _fromAmountFocusNode.dispose();
     _toAmountFocusNode.dispose();
     super.dispose();
+  }
+
+  String _formatAmount(double amount) {
+    if (amount == 0) return '';
+    // Remover ceros innecesarios al final
+    String formatted = amount.toString();
+    return formatted;
   }
 
   @override
@@ -85,16 +94,19 @@ class _BodyState extends State<_Body> {
             child: BlocBuilder<ExchangeBloc, ExchangeState>(
               builder: (context, state) {
                 if (state is ExchangeLoaded) {
-                  if (_fromAmountController.text !=
-                      state.fromAmount.toStringAsFixed(2)) {
-                    _fromAmountController.text = state.fromAmount
-                        .toStringAsFixed(2);
+                  // Solo actualizar si el usuario NO está escribiendo
+                  if (!_fromAmountFocusNode.hasFocus && !_isUserTyping) {
+                    final formatted = _formatAmount(state.fromAmount);
+                    if (_fromAmountController.text != formatted) {
+                      _fromAmountController.text = formatted;
+                    }
                   }
-                  if (_toAmountController.text !=
-                      state.toAmount.toStringAsFixed(2)) {
-                    _toAmountController.text = state.toAmount.toStringAsFixed(
-                      2,
-                    );
+                  
+                  if (!_toAmountFocusNode.hasFocus) {
+                    final formatted = _formatAmount(state.toAmount);
+                    if (_toAmountController.text != formatted) {
+                      _toAmountController.text = formatted;
+                    }
                   }
 
                   return Column(
@@ -130,11 +142,34 @@ class _BodyState extends State<_Body> {
                                       focusNode: _fromAmountFocusNode,
                                       backgroundColor: const Color(0xFF1E293B),
                                       onChanged: (value) {
-                                        final amount =
-                                            double.tryParse(value) ?? 0.0;
+                                        setState(() {
+                                          _isUserTyping = true;
+                                        });
+                                        
+                                        // Si está vacío, enviar 0
+                                        if (value.isEmpty) {
+                                          context.read<ExchangeBloc>().add(
+                                            const ChangeFromAmount(0.0),
+                                          );
+                                          setState(() {
+                                            _isUserTyping = false;
+                                          });
+                                          return;
+                                        }
+                                        
+                                        final amount = double.tryParse(value) ?? 0.0;
                                         context.read<ExchangeBloc>().add(
                                           ChangeFromAmount(amount),
                                         );
+                                        
+                                        // Marcar que terminó de escribir después de un momento
+                                        Future.delayed(const Duration(milliseconds: 1100), () {
+                                          if (mounted) {
+                                            setState(() {
+                                              _isUserTyping = false;
+                                            });
+                                          }
+                                        });
                                       },
                                     ),
                                     const SizedBox(height: 20),

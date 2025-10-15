@@ -30,7 +30,7 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
     on<ChangeToAmount>(_onChangeToAmount);
     on<CalculateExchangeRate>(
       _onCalculateExchangeRate,
-      transformer: debounceTransformer(const Duration(milliseconds: 800)),
+      transformer: debounceTransformer(const Duration(milliseconds: 1000)),
     );
     on<SwapCurrencies>(_onSwapCurrencies);
     on<ExecuteExchange>(_onExecuteExchange);
