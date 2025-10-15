@@ -1,6 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class DecimalInputFormatter extends TextInputFormatter {
+  final int decimalRange;
+
+  DecimalInputFormatter({this.decimalRange = 8})
+      : assert(decimalRange > 0);
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text;
+
+    if (text.isEmpty) {
+      return newValue;
+    }
+
+    // Permitir solo números y un punto decimal
+    if (!RegExp(r'^\d*\.?\d*$').hasMatch(text)) {
+      return oldValue;
+    }
+
+    // Verificar si hay más de un punto decimal
+    if (text.indexOf('.') != text.lastIndexOf('.')) {
+      return oldValue;
+    }
+
+    // Restringir la cantidad de decimales
+    if (text.contains('.')) {
+      final parts = text.split('.');
+      if (parts.length > 1 && parts[1].length > decimalRange) {
+        return oldValue;
+      }
+    }
+
+    return newValue;
+  }
+}
+
 class CurrencyCardWidget extends StatelessWidget {
   final String currencyCode;
   final IconData currencyIcon;
@@ -63,7 +100,7 @@ class CurrencyCardWidget extends StatelessWidget {
                 focusNode: focusNode,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                  DecimalInputFormatter(decimalRange: 8),
                 ],
                 style: const TextStyle(
                   color: Colors.white,
