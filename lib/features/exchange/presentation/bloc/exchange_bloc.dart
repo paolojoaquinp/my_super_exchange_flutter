@@ -1,11 +1,21 @@
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/currency_model.dart';
 import 'package:my_super_exchange_flutter/features/exchange/domain/entities/currency_entity.dart';
 import 'package:my_super_exchange_flutter/features/exchange/domain/repositories/exchange_repository.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 part 'exchange_event.dart';
 part 'exchange_state.dart';
+
+/// Transformer personalizado para debounce
+EventTransformer<E> debounceTransformer<E>(Duration duration) {
+  return (events, mapper) => restartable<E>().call(
+        events.debounce(duration),
+        mapper,
+      );
+}
 
 class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
   final ExchangeRepository _repository;
@@ -18,7 +28,10 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
     on<SelectToCurrency>(_onSelectToCurrency);
     on<ChangeFromAmount>(_onChangeFromAmount);
     on<ChangeToAmount>(_onChangeToAmount);
-    on<CalculateExchangeRate>(_onCalculateExchangeRate);
+    on<CalculateExchangeRate>(
+      _onCalculateExchangeRate,
+      transformer: debounceTransformer(const Duration(milliseconds: 800)),
+    );
     on<SwapCurrencies>(_onSwapCurrencies);
     on<ExecuteExchange>(_onExecuteExchange);
   }
@@ -47,11 +60,8 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
           availableCurrencies: currencies,
           fromCurrency: fiatCurrency,
           toCurrency: cryptoCurrency,
-          fromAmount: 320.0,
+          fromAmount: 0.0,
         ));
-
-        // Calcular tasa inicial
-        add(const CalculateExchangeRate(amount: 320.0, isFromAmount: true));
       },
       err: (error) {
         emit(ExchangeError(error));
