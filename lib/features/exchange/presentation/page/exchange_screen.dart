@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_super_exchange_flutter/features/exchange/data/repositories/exchange_repository_impl.dart';
+import 'package:my_super_exchange_flutter/features/exchange/data/repositories_impl/exchange_repository_impl.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/bloc/exchange_bloc.dart';
 import 'widgets/widgets.dart';
 

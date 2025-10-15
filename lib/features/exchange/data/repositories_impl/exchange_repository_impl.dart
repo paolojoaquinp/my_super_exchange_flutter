@@ -29,9 +29,24 @@ class ExchangeRepositoryImpl implements ExchangeRepository {
         amountCurrencyId: amountCurrencyId,
       );
 
-      // Extraer data.byPrice.fiatToCryptoExchangeRate
-      final data = response['data'] as Map<String, dynamic>;
-      final byPrice = data['byPrice'] as Map<String, dynamic>;
+      // Validar la estructura del response antes de hacer cualquier cast
+      final dataRaw = response['data'];
+      
+      // Si data es null o no es un Map, retornar error amigable
+      if (dataRaw == null || dataRaw is! Map<String, dynamic>) {
+        return const Err('Monto no disponible. Por favor, ingresa una cantidad menor.');
+      }
+      
+      final data = dataRaw;
+      
+      // Validar que exista byPrice antes de intentar accederlo
+      final byPriceRaw = data['byPrice'];
+      
+      if (byPriceRaw == null || byPriceRaw is! Map<String, dynamic>) {
+        return const Err('Monto no disponible. Por favor, ingresa una cantidad menor.');
+      }
+      
+      final byPrice = byPriceRaw;
 
       // Determinar las monedas origen y destino basado en el tipo
       final fromCurrencyId = type == 0 ? cryptoCurrencyId : fiatCurrencyId;
@@ -47,8 +62,13 @@ class ExchangeRepositoryImpl implements ExchangeRepository {
       );
 
       return Ok(exchangeRateModel);
+    } on FormatException catch (_) {
+      return const Err('Error al procesar la tasa de cambio. Intenta nuevamente.');
+    } on TypeError catch (_) {
+      return const Err('Monto no disponible. Por favor, ingresa una cantidad menor.');
     } catch (e) {
-      return Err('Error al obtener la tasa de cambio: $e');
+      // Para cualquier otro error, retornar mensaje genérico
+      return const Err('No se pudo obtener la tasa de cambio. Intenta nuevamente.');
     }
   }
 

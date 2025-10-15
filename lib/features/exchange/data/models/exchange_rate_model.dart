@@ -40,7 +40,16 @@ class ExchangeRateModel extends ExchangeRateEntity {
     required String toCurrencyId,
     required int type,
   }) {
-    final exchangeRate = (apiData['fiatToCryptoExchangeRate'] as num).toDouble();
+    // Validar que exista el exchangeRate
+    final exchangeRateValue = apiData['fiatToCryptoExchangeRate'];
+    if (exchangeRateValue == null) {
+      throw Exception('El API no devolvió la tasa de cambio (fiatToCryptoExchangeRate es null)');
+    }
+
+    // El API puede devolver el exchangeRate como String o como num
+    final exchangeRate = exchangeRateValue is String 
+        ? double.parse(exchangeRateValue) 
+        : (exchangeRateValue as num).toDouble();
     
     double fromAmount;
     double toAmount;
