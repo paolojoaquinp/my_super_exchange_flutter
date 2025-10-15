@@ -134,9 +134,12 @@ class _Body extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        BalanceCardWidget(
-                          amount: state.balance.amount,
-                          currency: state.balance.currency,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: BalanceCardWidget(
+                            amount: state.balance.amount,
+                            currency: state.balance.currency,
+                          ),
                         ),
                         const SizedBox(height: 32),
                         RecentRecipientsWidget(recipients: state.recipients),
