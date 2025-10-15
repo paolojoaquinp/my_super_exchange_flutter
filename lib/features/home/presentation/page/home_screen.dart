@@ -144,8 +144,8 @@ class _Body extends StatelessWidget {
                         const SizedBox(height: 32),
                         RecentRecipientsWidget(recipients: state.recipients),
                         const SizedBox(height: 32),
-                        SavingsSectionWidget(savings: state.savings),
-                        const SizedBox(height: 32),
+                        // SavingsSectionWidget(savings: state.savings),
+                        // const SizedBox(height: 32),
                       ],
                     ),
                   );
