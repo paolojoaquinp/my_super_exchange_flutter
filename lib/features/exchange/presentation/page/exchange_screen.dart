@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/repositories_impl/exchange_repository_impl.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/bloc/exchange_bloc.dart';
 import 'widgets/widgets.dart';
@@ -9,10 +10,10 @@ class ExchangeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ExchangeBloc(
-        repository: ExchangeRepositoryImpl(),
-      )..add(const LoadAvailableCurrencies()),
+    return BlocProvider<ExchangeBloc>(
+      create: (context) =>
+          ExchangeBloc(repository: ExchangeRepositoryImpl())
+            ..add(const LoadAvailableCurrencies()),
       child: const _Page(),
     );
   }
@@ -23,7 +24,32 @@ class _Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _Body();
+    return BlocListener<ExchangeBloc, ExchangeState>(
+      listener: (context, state) {
+        if (state is ExchangeError) {
+          Fluttertoast.showToast(
+            msg: state.message,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 3,
+            backgroundColor: const Color(0xFFEF4444),
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        } else if (state is ExchangeSuccess) {
+          Fluttertoast.showToast(
+            msg: state.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 2,
+            backgroundColor: const Color(0xFF10B981),
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      },
+      child: const _Body(),
+    );
   }
 }
 
@@ -56,30 +82,11 @@ class _BodyState extends State<_Body> {
         children: [
           _buildBackground(),
           SafeArea(
-            child: BlocConsumer<ExchangeBloc, ExchangeState>(
-              listener: (context, state) {
-                if (state is ExchangeError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                } else if (state is ExchangeSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
-              },
+            child: BlocBuilder<ExchangeBloc, ExchangeState>(
               builder: (context, state) {
                 if (state is ExchangeLoading) {
                   return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
+                    child: CircularProgressIndicator(color: Colors.white),
                   );
                 }
 
@@ -87,13 +94,14 @@ class _BodyState extends State<_Body> {
                   // Actualizar los controladores con los valores del estado
                   if (_fromAmountController.text !=
                       state.fromAmount.toStringAsFixed(2)) {
-                    _fromAmountController.text =
-                        state.fromAmount.toStringAsFixed(2);
+                    _fromAmountController.text = state.fromAmount
+                        .toStringAsFixed(2);
                   }
                   if (_toAmountController.text !=
                       state.toAmount.toStringAsFixed(2)) {
-                    _toAmountController.text =
-                        state.toAmount.toStringAsFixed(2);
+                    _toAmountController.text = state.toAmount.toStringAsFixed(
+                      2,
+                    );
                   }
 
                   return Column(
@@ -107,7 +115,8 @@ class _BodyState extends State<_Body> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
+                                  horizontal: 24.0,
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -131,8 +140,8 @@ class _BodyState extends State<_Body> {
                                         final amount =
                                             double.tryParse(value) ?? 0.0;
                                         context.read<ExchangeBloc>().add(
-                                              ChangeFromAmount(amount),
-                                            );
+                                          ChangeFromAmount(amount),
+                                        );
                                       },
                                     ),
                                     const SizedBox(height: 20),
@@ -156,8 +165,8 @@ class _BodyState extends State<_Body> {
                                         final amount =
                                             double.tryParse(value) ?? 0.0;
                                         context.read<ExchangeBloc>().add(
-                                              ChangeToAmount(amount),
-                                            );
+                                          ChangeToAmount(amount),
+                                        );
                                       },
                                     ),
                                     const SizedBox(height: 20),
@@ -167,9 +176,9 @@ class _BodyState extends State<_Body> {
                                     const SizedBox(height: 20),
                                     ExchangeButtonWidget(
                                       onTap: () {
-                                        context
-                                            .read<ExchangeBloc>()
-                                            .add(const ExecuteExchange());
+                                        context.read<ExchangeBloc>().add(
+                                          const ExecuteExchange(),
+                                        );
                                       },
                                     ),
                                     const SizedBox(height: 24),
@@ -220,4 +229,3 @@ class _BodyState extends State<_Body> {
     );
   }
 }
-
