@@ -1,8 +1,10 @@
+import 'package:decimal/decimal.dart';
+
 class ExchangeRateEntity {
-  final double exchangeRate;
-  final double fromAmount;
-  final double toAmount;
-  final double platformFee;
+  final Decimal exchangeRate;
+  final Decimal fromAmount;
+  final Decimal toAmount;
+  final Decimal platformFee;
   final String fromCurrencyId;
   final String toCurrencyId;
 

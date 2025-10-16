@@ -43,6 +43,7 @@ dependencies:
   fluttertoast: ^8.2.8
   bloc_concurrency: ^0.3.0
   stream_transform: ^2.1.0
+  decimal: ^3.0.2
 
 dev_dependencies:
   flutter_test:

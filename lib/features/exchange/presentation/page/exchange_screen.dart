@@ -1,8 +1,10 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/repositories_impl/exchange_repository_impl.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/bloc/exchange_bloc.dart';
+import 'package:my_super_exchange_flutter/features/exchange/presentation/utils/amount_formatter.dart';
 import 'widgets/widgets.dart';
 
 class ExchangeScreen extends StatelessWidget {
@@ -17,7 +19,7 @@ class ExchangeScreen extends StatelessWidget {
       child: const _Page(),
     );
   }
-}
+} 
 
 class _Page extends StatelessWidget {
   const _Page();
@@ -77,13 +79,6 @@ class _BodyState extends State<_Body> {
     super.dispose();
   }
 
-  String _formatAmount(double amount) {
-    if (amount == 0) return '';
-    // Remover ceros innecesarios al final
-    String formatted = amount.toString();
-    return formatted;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,14 +91,14 @@ class _BodyState extends State<_Body> {
                 if (state is ExchangeLoaded) {
                   // Solo actualizar si el usuario NO está escribiendo
                   if (!_fromAmountFocusNode.hasFocus && !_isUserTyping) {
-                    final formatted = _formatAmount(state.fromAmount);
+                    final formatted = AmountFormatter.format(state.fromAmount);
                     if (_fromAmountController.text != formatted) {
                       _fromAmountController.text = formatted;
                     }
                   }
                   
                   if (!_toAmountFocusNode.hasFocus) {
-                    final formatted = _formatAmount(state.toAmount);
+                    final formatted = AmountFormatter.format(state.toAmount);
                     if (_toAmountController.text != formatted) {
                       _toAmountController.text = formatted;
                     }
@@ -149,7 +144,7 @@ class _BodyState extends State<_Body> {
                                         // Si está vacío, enviar 0
                                         if (value.isEmpty) {
                                           context.read<ExchangeBloc>().add(
-                                            const ChangeFromAmount(0.0),
+                                            ChangeFromAmount(Decimal.zero),
                                           );
                                           setState(() {
                                             _isUserTyping = false;
@@ -157,7 +152,7 @@ class _BodyState extends State<_Body> {
                                           return;
                                         }
                                         
-                                        final amount = double.tryParse(value) ?? 0.0;
+                                        final amount = AmountFormatter.parse(value);
                                         context.read<ExchangeBloc>().add(
                                           ChangeFromAmount(amount),
                                         );
@@ -190,8 +185,7 @@ class _BodyState extends State<_Body> {
                                       focusNode: _toAmountFocusNode,
                                       backgroundColor: const Color(0xFF1E293B),
                                       onChanged: (value) {
-                                        final amount =
-                                            double.tryParse(value) ?? 0.0;
+                                        final amount = AmountFormatter.parse(value);
                                         context.read<ExchangeBloc>().add(
                                           ChangeToAmount(amount),
                                         );
@@ -199,7 +193,7 @@ class _BodyState extends State<_Body> {
                                     ),
                                     const SizedBox(height: 20),
                                     PlatformFeeWidget(
-                                      fee: state.platformFee.toStringAsFixed(2),
+                                      fee: AmountFormatter.formatFixed(state.platformFee, 2),
                                     ),
                                     const SizedBox(height: 20),
                                     ExchangeButtonWidget(

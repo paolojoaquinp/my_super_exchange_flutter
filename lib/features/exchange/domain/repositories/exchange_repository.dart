@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/currency_model.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/exchange_rate_model.dart';
 import 'package:oxidized/oxidized.dart';
@@ -13,7 +14,7 @@ abstract class ExchangeRepository {
     required int type,
     required String cryptoCurrencyId,
     required String fiatCurrencyId,
-    required double amount,
+    required Decimal amount,
     required String amountCurrencyId,
   });
 

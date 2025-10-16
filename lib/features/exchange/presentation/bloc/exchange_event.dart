@@ -34,7 +34,7 @@ class SelectToCurrency extends ExchangeEvent {
 
 /// Evento para cambiar el monto origen
 class ChangeFromAmount extends ExchangeEvent {
-  final double amount;
+  final Decimal amount;
 
   const ChangeFromAmount(this.amount);
 
@@ -44,7 +44,7 @@ class ChangeFromAmount extends ExchangeEvent {
 
 /// Evento para cambiar el monto destino
 class ChangeToAmount extends ExchangeEvent {
-  final double amount;
+  final Decimal amount;
 
   const ChangeToAmount(this.amount);
 
@@ -54,7 +54,7 @@ class ChangeToAmount extends ExchangeEvent {
 
 /// Evento para calcular la tasa de cambio
 class CalculateExchangeRate extends ExchangeEvent {
-  final double amount;
+  final Decimal amount;
   final bool isFromAmount;
 
   const CalculateExchangeRate({

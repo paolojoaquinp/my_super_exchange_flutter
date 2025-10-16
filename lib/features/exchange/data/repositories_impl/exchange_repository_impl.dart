@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/datasources/api/exchange_api_datasource.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/currency_model.dart';
@@ -18,7 +19,7 @@ class ExchangeRepositoryImpl implements ExchangeRepository {
     required int type,
     required String cryptoCurrencyId,
     required String fiatCurrencyId,
-    required double amount,
+    required Decimal amount,
     required String amountCurrencyId,
   }) async {
     try {
@@ -26,7 +27,7 @@ class ExchangeRepositoryImpl implements ExchangeRepository {
         type: type,
         cryptoCurrencyId: cryptoCurrencyId,
         fiatCurrencyId: fiatCurrencyId,
-        amount: amount,
+        amount: amount.toDouble(), // Convertir a double para el API
         amountCurrencyId: amountCurrencyId,
       );
 

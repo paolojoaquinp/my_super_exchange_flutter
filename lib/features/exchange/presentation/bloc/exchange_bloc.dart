@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:decimal/decimal.dart';
 import 'package:equatable/equatable.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/models/currency_model.dart';
 import 'package:my_super_exchange_flutter/features/exchange/domain/entities/currency_entity.dart';
@@ -60,7 +61,7 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
           availableCurrencies: currencies,
           fromCurrency: fiatCurrency,
           toCurrency: cryptoCurrency,
-          fromAmount: 0.0,
+          fromAmount: Decimal.zero,
         ));
       },
       err: (error) {
@@ -78,7 +79,7 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
       emit(currentState.copyWith(fromCurrency: event.currency));
 
       // Recalcular si hay un monto
-      if (currentState.fromAmount > 0) {
+      if (currentState.fromAmount > Decimal.zero) {
         add(CalculateExchangeRate(
           amount: currentState.fromAmount,
           isFromAmount: true,
@@ -96,7 +97,7 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
       emit(currentState.copyWith(toCurrency: event.currency));
 
       // Recalcular si hay un monto
-      if (currentState.fromAmount > 0) {
+      if (currentState.fromAmount > Decimal.zero) {
         add(CalculateExchangeRate(
           amount: currentState.fromAmount,
           isFromAmount: true,
@@ -113,13 +114,13 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
       final currentState = state as ExchangeLoaded;
       emit(currentState.copyWith(fromAmount: event.amount));
 
-      if (event.amount > 0) {
+      if (event.amount > Decimal.zero) {
         add(CalculateExchangeRate(amount: event.amount, isFromAmount: true));
       } else {
         emit(currentState.copyWith(
-          fromAmount: 0.0,
-          toAmount: 0.0,
-          platformFee: 0.0,
+          fromAmount: Decimal.zero,
+          toAmount: Decimal.zero,
+          platformFee: Decimal.zero,
         ));
       }
     }
@@ -133,13 +134,13 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
       final currentState = state as ExchangeLoaded;
       emit(currentState.copyWith(toAmount: event.amount));
 
-      if (event.amount > 0) {
+      if (event.amount > Decimal.zero) {
         add(CalculateExchangeRate(amount: event.amount, isFromAmount: false));
       } else {
         emit(currentState.copyWith(
-          fromAmount: 0.0,
-          toAmount: 0.0,
-          platformFee: 0.0,
+          fromAmount: Decimal.zero,
+          toAmount: Decimal.zero,
+          platformFee: Decimal.zero,
         ));
       }
     }
@@ -231,7 +232,7 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
       ));
 
       // Recalcular con las monedas intercambiadas
-      if (currentState.toAmount > 0) {
+      if (currentState.toAmount > Decimal.zero) {
         add(CalculateExchangeRate(
           amount: currentState.toAmount,
           isFromAmount: true,
@@ -247,7 +248,7 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
     if (state is ExchangeLoaded) {
       final currentState = state as ExchangeLoaded;
       
-      if (currentState.fromAmount <= 0 || currentState.toAmount <= 0) {
+      if (currentState.fromAmount <= Decimal.zero || currentState.toAmount <= Decimal.zero) {
         emit(const ExchangeError('Ingrese un monto válido'));
         emit(currentState);
         return;

@@ -15,33 +15,35 @@ final class ExchangeLoaded extends ExchangeState {
   final List<CurrencyModel> availableCurrencies;
   final CurrencyModel? fromCurrency;
   final CurrencyModel? toCurrency;
-  final double fromAmount;
-  final double toAmount;
-  final double platformFee;
-  final double? exchangeRate;
+  final Decimal fromAmount;
+  final Decimal toAmount;
+  final Decimal platformFee;
+  final Decimal? exchangeRate;
   final bool isCalculating;
   final bool isExecutingExchange;
 
-  const ExchangeLoaded({
+  ExchangeLoaded({
     required this.availableCurrencies,
     this.fromCurrency,
     this.toCurrency,
-    this.fromAmount = 0.0,
-    this.toAmount = 0.0,
-    this.platformFee = 0.0,
+    Decimal? fromAmount,
+    Decimal? toAmount,
+    Decimal? platformFee,
     this.exchangeRate,
     this.isCalculating = false,
     this.isExecutingExchange = false,
-  });
+  })  : fromAmount = fromAmount ?? Decimal.zero,
+        toAmount = toAmount ?? Decimal.zero,
+        platformFee = platformFee ?? Decimal.zero;
 
   ExchangeLoaded copyWith({
     List<CurrencyModel>? availableCurrencies,
     CurrencyModel? fromCurrency,
     CurrencyModel? toCurrency,
-    double? fromAmount,
-    double? toAmount,
-    double? platformFee,
-    double? exchangeRate,
+    Decimal? fromAmount,
+    Decimal? toAmount,
+    Decimal? platformFee,
+    Decimal? exchangeRate,
     bool? isCalculating,
     bool? isExecutingExchange,
   }) {

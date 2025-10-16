@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:my_super_exchange_flutter/features/exchange/domain/entities/exchange_rate_entity.dart';
 
@@ -13,10 +14,10 @@ class ExchangeRateModel extends ExchangeRateEntity {
 
   Map<String, dynamic> toJson() {
     return {
-      'exchangeRate': exchangeRate,
-      'fromAmount': fromAmount,
-      'toAmount': toAmount,
-      'platformFee': platformFee,
+      'exchangeRate': exchangeRate.toString(),
+      'fromAmount': fromAmount.toString(),
+      'toAmount': toAmount.toString(),
+      'platformFee': platformFee.toString(),
       'fromCurrencyId': fromCurrencyId,
       'toCurrencyId': toCurrencyId,
     };
@@ -24,10 +25,10 @@ class ExchangeRateModel extends ExchangeRateEntity {
 
   factory ExchangeRateModel.fromJson(Map<String, dynamic> json) {
     return ExchangeRateModel(
-      exchangeRate: (json['exchangeRate'] as num).toDouble(),
-      fromAmount: (json['fromAmount'] as num).toDouble(),
-      toAmount: (json['toAmount'] as num).toDouble(),
-      platformFee: (json['platformFee'] as num).toDouble(),
+      exchangeRate: Decimal.parse(json['exchangeRate'].toString()),
+      fromAmount: Decimal.parse(json['fromAmount'].toString()),
+      toAmount: Decimal.parse(json['toAmount'].toString()),
+      platformFee: Decimal.parse(json['platformFee'].toString()),
       fromCurrencyId: json['fromCurrencyId'] as String,
       toCurrencyId: json['toCurrencyId'] as String,
     );
@@ -35,7 +36,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
 
   factory ExchangeRateModel.fromApiResponse({
     required Map<String, dynamic> apiData,
-    required double amount,
+    required Decimal amount,
     required String amountCurrencyId,
     required String fromCurrencyId,
     required String toCurrencyId,
@@ -48,9 +49,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
     }
 
     // El API puede devolver el exchangeRate como String o como num
-    final exchangeRate = exchangeRateValue is String 
-        ? double.parse(exchangeRateValue) 
-        : (exchangeRateValue as num).toDouble();
+    final exchangeRate = Decimal.parse(exchangeRateValue.toString());
     
     // 🔍 LOG: Ver los parámetros de entrada
     debugPrint('═══════════════════════════════════');
@@ -62,8 +61,8 @@ class ExchangeRateModel extends ExchangeRateEntity {
     debugPrint('From Currency: $fromCurrencyId');
     debugPrint('To Currency: $toCurrencyId');
     
-    double fromAmount;
-    double toAmount;
+    Decimal fromAmount;
+    Decimal toAmount;
     
     // type: 0 -> CRYPTO a FIAT, 1 -> FIAT a CRYPTO
     if (type == 0) {
@@ -77,7 +76,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
       } else {
         // La cantidad está en fiat
         toAmount = amount;
-        fromAmount = amount / exchangeRate;
+        fromAmount = (amount / exchangeRate).toDecimal();
         debugPrint('✅ Caso: CRYPTO→FIAT, escribiendo en TO');
         debugPrint('   Cálculo: $toAmount $toCurrencyId ÷ $exchangeRate = $fromAmount $fromCurrencyId');
       }
@@ -86,7 +85,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
       if (amountCurrencyId == fromCurrencyId) {
         // La cantidad está en fiat
         fromAmount = amount;
-        toAmount = amount / exchangeRate;
+        toAmount = (amount / exchangeRate).toDecimal();
         debugPrint('✅ Caso: FIAT→CRYPTO, escribiendo en FROM');
         debugPrint('   Cálculo: $fromAmount $fromCurrencyId ÷ $exchangeRate = $toAmount $toCurrencyId');
       } else {
@@ -99,7 +98,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
     }
 
     // Calcular el fee de plataforma (ejemplo: 0.5% del monto origen)
-    final platformFee = fromAmount * 0.005;
+    final platformFee = fromAmount * Decimal.parse('0.005');
     
     debugPrint('💰 Platform Fee: $platformFee (0.5% de $fromAmount)');
     debugPrint('📤 Resultado Final:');
@@ -118,10 +117,10 @@ class ExchangeRateModel extends ExchangeRateEntity {
   }
 
   ExchangeRateModel copyWith({
-    double? exchangeRate,
-    double? fromAmount,
-    double? toAmount,
-    double? platformFee,
+    Decimal? exchangeRate,
+    Decimal? fromAmount,
+    Decimal? toAmount,
+    Decimal? platformFee,
     String? fromCurrencyId,
     String? toCurrencyId,
   }) {
