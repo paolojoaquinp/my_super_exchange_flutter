@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:my_super_exchange_flutter/core/config/splash_screen.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/page/exchange_screen.dart';
 import 'package:my_super_exchange_flutter/features/home/presentation/page/home_screen.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+ runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
