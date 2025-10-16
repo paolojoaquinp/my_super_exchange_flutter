@@ -185,19 +185,6 @@ lcov --summary coverage/lcov.info
 lcov --list coverage/lcov.info
 ```
 
-## 🤝 Contribuir
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Escribe tests para tu código
-4. Asegúrate de que todos los tests pasen (`flutter test`)
-5. Verifica la cobertura (`./scripts/test_coverage.sh`)
-6. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-7. Push a la rama (`git push origin feature/AmazingFeature`)
-8. Abre un Pull Request
-
 ## 🚀 Sobre Mí
 
 Ingeniero de Software con amplia experiencia en Flutter, con más de 5 años de expertise en el ecosistema. Reconocido como Flutter La Paz Lead, con contribuciones destacadas incluyendo participación en múltiples eventos de GDG La Paz y Flutter La Paz. Speaker reconocido en diversos eventos en Ecuador, Uruguay y Bolivia, tales como Flutter Ecuador, Flutter Uruguay, DevFest y Google IO. Lideré exitosamente el desarrollo de FireGuard LP, una plataforma robusta de prevención de incendios forestales en Flutter. Proactivo y orientado a soluciones, demostrando habilidades excepcionales de comunicación y liderazgo en la gestión de proyectos de equipos pequeños.
