@@ -23,11 +23,15 @@ class ExchangeRepositoryImpl implements ExchangeRepository {
     required String amountCurrencyId,
   }) async {
     try {
+      // Convertir el Decimal a Rational primero, luego a Decimal con escala finita
+      final rational = amount.toRational();
+      final roundedAmount = rational.toDecimal(scaleOnInfinitePrecision: 8);
+      
       final response = await _apiDataSource.getOrderbookRecommendations(
         type: type,
         cryptoCurrencyId: cryptoCurrencyId,
         fiatCurrencyId: fiatCurrencyId,
-        amount: amount.toDouble(), // Convertir a double para el API
+        amount: roundedAmount.toDouble(),
         amountCurrencyId: amountCurrencyId,
       );
 

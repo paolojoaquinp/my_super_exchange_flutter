@@ -76,7 +76,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
       } else {
         // La cantidad está en fiat
         toAmount = amount;
-        fromAmount = (amount / exchangeRate).toDecimal();
+        fromAmount = (amount / exchangeRate).toDecimal(scaleOnInfinitePrecision: 8);
         debugPrint('✅ Caso: CRYPTO→FIAT, escribiendo en TO');
         debugPrint('   Cálculo: $toAmount $toCurrencyId ÷ $exchangeRate = $fromAmount $fromCurrencyId');
       }
@@ -85,7 +85,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
       if (amountCurrencyId == fromCurrencyId) {
         // La cantidad está en fiat
         fromAmount = amount;
-        toAmount = (amount / exchangeRate).toDecimal();
+        toAmount = (amount / exchangeRate).toDecimal(scaleOnInfinitePrecision: 8);
         debugPrint('✅ Caso: FIAT→CRYPTO, escribiendo en FROM');
         debugPrint('   Cálculo: $fromAmount $fromCurrencyId ÷ $exchangeRate = $toAmount $toCurrencyId');
       } else {
@@ -98,7 +98,7 @@ class ExchangeRateModel extends ExchangeRateEntity {
     }
 
     // Calcular el fee de plataforma (ejemplo: 0.5% del monto origen)
-    final platformFee = fromAmount * Decimal.parse('0.005');
+    final platformFee = fromAmount * Decimal.parse('0.005',);
     
     debugPrint('💰 Platform Fee: $platformFee (0.5% de $fromAmount)');
     debugPrint('📤 Resultado Final:');
