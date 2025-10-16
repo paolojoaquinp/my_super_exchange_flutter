@@ -1,11 +1,14 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_super_exchange_flutter/features/exchange/presentation/page/exchange_screen.dart';
 import 'package:my_super_exchange_flutter/features/home/data/repositories/home_repository_impl.dart';
 import 'package:my_super_exchange_flutter/features/home/presentation/bloc/home_bloc.dart';
 import 'widgets/header_widget.dart';
 import 'widgets/balance_card_widget.dart';
 import 'widgets/recent_recipients_widget.dart';
-import 'widgets/savings_section_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -136,11 +139,33 @@ class _Body extends StatelessWidget {
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Hero(
-                            tag: 'balance_card',
-                            child: BalanceCardWidget(
-                              amount: state.balance.amount,
-                              currency: state.balance.currency,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 1200),
+                              reverseTransitionDuration: const Duration(milliseconds: 1200),
+                              pageBuilder: (context, animation, secondaryAnimation) {
+                                return ExchangeScreen();
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
+                              },
+                            ));
+                            },
+                            child: Hero(
+                              tag: 'balance_card',
+                              child: Material(
+                                color: Colors.transparent,
+                                child: BalanceCardWidget(
+                                  amount: state.balance.amount,
+                                  currency: state.balance.currency,
+                                ),
+                              ),
                             ),
                           ),
                         ),
