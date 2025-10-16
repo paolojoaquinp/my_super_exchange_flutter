@@ -7,8 +7,8 @@ Una aplicación móvil para intercambiar monedas fiduciarias (FIAT) y criptomone
 - **Flutter** 3.32.5
 - **Dart** 3.8.1
 - **Flutter BLoC** (flutter_bloc) 9.1.1
-- **Oxidized** 6.2.0 (Result type)
-- **Decimal** 3.0.2 (Precisión en cálculos)
+- **Oxidized** 6.2.0 (Result type para manejo de errores)
+- **Decimal** 3.0.2 (Aritmética de precisión exacta, evita errores de punto flotante)
 - **Dio** 5.9.0 (HTTP client)
 - **Lottie** 3.3.1 (Animaciones)
 
@@ -34,6 +34,7 @@ Una aplicación móvil para intercambiar monedas fiduciarias (FIAT) y criptomone
 - 🔄 Swap rápido entre monedas
 - ⚡ Debounce en cálculos para mejor rendimiento
 - 🎭 Animaciones con Lottie
+- 🔢 **Uso de Decimal** para precisión exacta en cálculos financieros (evita errores de punto flotante)
 
 ## 🏗️ Arquitectura
 
