@@ -1,8 +1,6 @@
-import 'dart:math';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_super_exchange_flutter/core/widgets/animated_fade_in_widget.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/page/exchange_screen.dart';
 import 'package:my_super_exchange_flutter/features/home/data/repositories/home_repository_impl.dart';
 import 'package:my_super_exchange_flutter/features/home/presentation/bloc/home_bloc.dart';
@@ -100,15 +98,19 @@ class _Body extends StatelessWidget {
                 }
       
                 if (state is HomeDataLoadedState) {
+                  const int transitionDuration = 1500;
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 16),
-                        HeaderWidget(
-                          profileImage: state.user.profileImage,
-                          userName: state.user.name,
-                          notificationCount: state.user.notificationCount,
+                        AnimatedFadeInWidget(
+                          duration: const Duration(milliseconds: transitionDuration + 100),
+                          child: HeaderWidget(
+                            profileImage: state.user.profileImage,
+                            userName: state.user.name,
+                            notificationCount: state.user.notificationCount,
+                          ),
                         ),
                         const SizedBox(height: 32),
                         Padding(
@@ -116,61 +118,73 @@ class _Body extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Welcome back!',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                              AnimatedFadeInWidget(
+                                duration: const Duration(milliseconds: transitionDuration + 300),
+                                child: Text(
+                                  'Welcome back!',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                'Hello, ${state.user.firstName}!',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w700,
+                              AnimatedFadeInWidget(
+                                duration: const Duration(milliseconds: transitionDuration + 450),
+                                child: Text(
+                                  'Hello, ${state.user.firstName}!',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              transitionDuration: const Duration(milliseconds: 1200),
-                              reverseTransitionDuration: const Duration(milliseconds: 1200),
-                              pageBuilder: (context, animation, secondaryAnimation) {
-                                return ExchangeScreen();
+                        AnimatedFadeInWidget(
+                          duration: const Duration(milliseconds: transitionDuration + 600),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 1200),
+                                reverseTransitionDuration: const Duration(milliseconds: 1200),
+                                pageBuilder: (context, animation, secondaryAnimation) {
+                                  return const ExchangeScreen();
+                                },
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ));
                               },
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                            ));
-                            },
-                            child: Hero(
-                              tag: 'balance_card',
-                              child: Material(
-                                color: Colors.transparent,
-                                child: BalanceCardWidget(
-                                  amount: state.balance.amount,
-                                  currency: state.balance.currency,
+                              child: Hero(
+                                tag: 'balance_card',
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: BalanceCardWidget(
+                                    amount: state.balance.amount,
+                                    currency: state.balance.currency,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 32),
-                        RecentRecipientsWidget(recipients: state.recipients),
+                        AnimatedFadeInWidget(
+                          duration: const Duration(milliseconds: transitionDuration + 750),
+                          child: RecentRecipientsWidget(recipients: state.recipients),
+                        ),
                         const SizedBox(height: 32),
                         // SavingsSectionWidget(savings: state.savings),
                         // const SizedBox(height: 32),

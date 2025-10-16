@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_super_exchange_flutter/core/widgets/animated_fade_in_widget.dart';
 import 'package:my_super_exchange_flutter/features/exchange/data/repositories_impl/exchange_repository_impl.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/bloc/exchange_bloc.dart';
 import 'package:my_super_exchange_flutter/features/exchange/presentation/utils/amount_formatter.dart';
@@ -82,6 +83,7 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    const int transitionDuration = 1500;
     return Scaffold(
       body: Stack(
         children: [
@@ -90,7 +92,10 @@ class _BodyState extends State<_Body> {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                const ExchangeHeaderWidget(),
+                const AnimatedFadeInWidget(
+                  duration: Duration(milliseconds: transitionDuration + 100),
+                  child: ExchangeHeaderWidget(),
+                ),
                 const SizedBox(height: 32),
                 Expanded(
                   child: SingleChildScrollView(
@@ -103,44 +108,19 @@ class _BodyState extends State<_Body> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              BlocBuilder<ExchangeBloc, ExchangeState>(
-                                builder: (context, state) {
-                                  // Solo actualizar si el usuario NO está escribiendo
-                                  if (state is ExchangeLoaded) {
-                                    if (!_fromAmountFocusNode.hasFocus && !_isUserTyping) {
-                                      final formatted = AmountFormatter.format(state.fromAmount);
-                                      if (_fromAmountController.text != formatted) {
-                                        _fromAmountController.text = formatted;
-                                      }
-                                    }
-                                    
-                                    if (!_toAmountFocusNode.hasFocus) {
-                                      final formatted = AmountFormatter.format(state.toAmount);
-                                      if (_toAmountController.text != formatted) {
-                                        _toAmountController.text = formatted;
-                                      }
-                                    }
-                                  }
-
-                                  final amount = state is ExchangeLoaded 
-                                      ? state.fromAmount.toDouble() 
-                                      : 0.0;
-                                  final currency = state is ExchangeLoaded 
-                                      ? state.fromCurrency?.code ?? 'USD' 
-                                      : 'USD';
-                                  
-                                  return Hero(
-                                    tag: 'balance_card',
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: BalanceCardWidget(
-                                        amount: amount,
-                                        currency: currency,
-                                        showButton: false,
-                                      ),
+                              AnimatedFadeInWidget(
+                                duration: const Duration(milliseconds: transitionDuration + 250),
+                                child: Hero(
+                                  tag: 'balance_card',
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: BalanceCardWidget(
+                                      amount: 24000.97,
+                                      currency: 'USD',
+                                      showButton: false,
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 20),
                               // Resto del contenido con BlocBuilder
@@ -160,89 +140,107 @@ class _BodyState extends State<_Body> {
                                   return Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'From',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                      const AnimatedFadeInWidget(
+                                        duration: Duration(milliseconds: transitionDuration + 400),
+                                        child: Text(
+                                          'From',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 12),
-                                      CurrencyCardWidget(
-                                        currencyCode:
-                                            state.fromCurrency?.code ?? '',
-                                        currencyIcon: Icons.attach_money,
-                                        amountController: _fromAmountController,
-                                        focusNode: _fromAmountFocusNode,
-                                        backgroundColor: const Color(0xFF1E293B),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _isUserTyping = true;
-                                          });
-                                          
-                                          // Si está vacío, enviar 0
-                                          if (value.isEmpty) {
-                                            context.read<ExchangeBloc>().add(
-                                              ChangeFromAmount(Decimal.zero),
-                                            );
+                                      AnimatedFadeInWidget(
+                                        duration: const Duration(milliseconds: transitionDuration + 500),
+                                        child: CurrencyCardWidget(
+                                          currencyCode:
+                                              state.fromCurrency?.code ?? '',
+                                          currencyIcon: Icons.attach_money,
+                                          amountController: _fromAmountController,
+                                          focusNode: _fromAmountFocusNode,
+                                          backgroundColor: const Color(0xFF1E293B),
+                                          onChanged: (value) {
                                             setState(() {
-                                              _isUserTyping = false;
+                                              _isUserTyping = true;
                                             });
-                                            return;
-                                          }
-                                          
-                                          final amount = AmountFormatter.parse(value);
-                                          context.read<ExchangeBloc>().add(
-                                            ChangeFromAmount(amount),
-                                          );
-                                          
-                                          // Marcar que terminó de escribir después de un momento
-                                          Future.delayed(const Duration(milliseconds: 1100), () {
-                                            if (mounted) {
+                                            
+                                            // Si está vacío, enviar 0
+                                            if (value.isEmpty) {
+                                              context.read<ExchangeBloc>().add(
+                                                ChangeFromAmount(Decimal.zero),
+                                              );
                                               setState(() {
                                                 _isUserTyping = false;
                                               });
+                                              return;
                                             }
-                                          });
-                                        },
+                                            
+                                            final amount = AmountFormatter.parse(value);
+                                            context.read<ExchangeBloc>().add(
+                                              ChangeFromAmount(amount),
+                                            );
+                                            
+                                            // Marcar que terminó de escribir después de un momento
+                                            Future.delayed(const Duration(milliseconds: 1100), () {
+                                              if (mounted) {
+                                                setState(() {
+                                                  _isUserTyping = false;
+                                                });
+                                              }
+                                            });
+                                          },
+                                        ),
                                       ),
                                       const SizedBox(height: 20),
-                                      const Text(
-                                        'To',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                      const AnimatedFadeInWidget(
+                                        duration: Duration(milliseconds: transitionDuration + 600),
+                                        child: Text(
+                                          'To',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 12),
-                                      CurrencyCardWidget(
-                                        currencyCode:
-                                            state.toCurrency?.code ?? '',
-                                        currencyIcon: Icons.currency_bitcoin,
-                                        amountController: _toAmountController,
-                                        focusNode: _toAmountFocusNode,
-                                        backgroundColor: const Color(0xFF1E293B),
-                                        onChanged: (value) {
-                                          final amount = AmountFormatter.parse(value);
-                                          context.read<ExchangeBloc>().add(
-                                            ChangeToAmount(amount),
-                                          );
-                                        },
+                                      AnimatedFadeInWidget(
+                                        duration: const Duration(milliseconds: transitionDuration + 700),
+                                        child: CurrencyCardWidget(
+                                          currencyCode:
+                                              state.toCurrency?.code ?? '',
+                                          currencyIcon: Icons.currency_bitcoin,
+                                          amountController: _toAmountController,
+                                          focusNode: _toAmountFocusNode,
+                                          backgroundColor: const Color(0xFF1E293B),
+                                          onChanged: (value) {
+                                            final amount = AmountFormatter.parse(value);
+                                            context.read<ExchangeBloc>().add(
+                                              ChangeToAmount(amount),
+                                            );
+                                          },
+                                        ),
                                       ),
                                       const SizedBox(height: 20),
-                                      PlatformFeeWidget(
-                                        fee: AmountFormatter.formatFixed(state.platformFee, 2),
+                                      AnimatedFadeInWidget(
+                                        duration: const Duration(milliseconds: transitionDuration + 800),
+                                        child: PlatformFeeWidget(
+                                          fee: AmountFormatter.formatFixed(state.platformFee, 2),
+                                        ),
                                       ),
                                       const SizedBox(height: 20),
-                                      ExchangeButtonWidget(
-                                        isLoading: state.isExecutingExchange || (state is ExchangeLoading) || state.isCalculating,
-                                        onTap: () {
-                                          context.read<ExchangeBloc>().add(
-                                            const ExecuteExchange(),
-                                          );
-                                        },
+                                      AnimatedFadeInWidget(
+                                        duration: const Duration(milliseconds: transitionDuration + 900),
+                                        child: ExchangeButtonWidget(
+                                          isLoading: state.isExecutingExchange || (state is ExchangeLoading) || state.isCalculating,
+                                          onTap: () {
+                                            context.read<ExchangeBloc>().add(
+                                              const ExecuteExchange(),
+                                            );
+                                          },
+                                        ),
                                       ),
                                       const SizedBox(height: 24),
                                     ],
