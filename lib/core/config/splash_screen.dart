@@ -36,18 +36,35 @@ class SplashScreen extends StatelessWidget {
         }
 
         return Scaffold(
-          backgroundColor: Colors.white,
-          body: Center(
-            // child: Text('Splash Screen'),
-            child: Lottie.asset(
-              'assets/lotties/bitcoin-wallet.json',
-              width: 400,
-              height: 400,
-              fit: BoxFit.contain
-            ),
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              _buildBackground(),
+              Center(
+                // child: Text('Splash Screen'),
+                child: Lottie.asset(
+                  'assets/lotties/bitcoin-wallet.json',
+                  width: 400,
+                  height: 400,
+                  fit: BoxFit.contain
+                ),
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF2D3E6F), Color(0xFF1E293B), Color(0xFF0F172A)],
+        ),
+      ),
     );
   }
 }
